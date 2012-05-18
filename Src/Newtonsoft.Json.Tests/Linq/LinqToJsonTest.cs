@@ -719,7 +719,7 @@ keyword such as type of business.""
       Assert.AreEqual(new DateTime(2000, 10, 15, 5, 5, 5, DateTimeKind.Utc), d);
     }
 
-#if !(NET20 || NET35 || SILVERLIGHT || PORTABLE)
+#if !(NET20 || NET35 || SILVERLIGHT || PORTABLE || MONOTOUCH || MONODROID)
     [Test]
     public void CovariantIJEnumerable()
     {

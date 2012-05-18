@@ -24,7 +24,7 @@
 #endregion
 
 #if !PORTABLE
-#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE)
+#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE || MONOTOUCH || MONODROID)
 using System.Dynamic;
 #endif
 using Newtonsoft.Json.Tests.Linq;
@@ -140,7 +140,7 @@ namespace Newtonsoft.Json.Tests.Serialization
       Assert.AreEqual("Name!", ((EmployeeReference) employee).Name);
     }
 
-#if !(SILVERLIGHT || NETFX_CORE || PORTABLE)
+#if !(SILVERLIGHT || NETFX_CORE || PORTABLE || MONOTOUCH || MONODROID)
     [Test]
     public void DeserializeTypeNameFromGacAssembly()
     {
@@ -531,7 +531,7 @@ namespace Newtonsoft.Json.Tests.Serialization
       }
     }
 
-#if !(NET20 || NET35)
+#if !(NET20 || NET35 || MONOTOUCH || MONODROID)
     [Test]
     public void SerializeUsingCustomBinder()
     {
@@ -963,7 +963,7 @@ namespace Newtonsoft.Json.Tests.Serialization
     }
 #endif
 
-#if !(NET20 || NET35)
+#if !(NET20 || NET35 || MONOTOUCH || MONODROID)
     [Test]
     public void SerializationBinderWithFullName()
     {
@@ -980,7 +980,7 @@ namespace Newtonsoft.Json.Tests.Serialization
           Binder = new MetroBinder(),
           ContractResolver = new DefaultContractResolver
             {
-#if !(SILVERLIGHT || NETFX_CORE || PORTABLE)
+#if !(SILVERLIGHT || NETFX_CORE || PORTABLE || MONOTOUCH || MONODROID)
               IgnoreSerializableAttribute = true
 #endif
             }
@@ -1382,7 +1382,7 @@ namespace Newtonsoft.Json.Tests.Serialization
       Assert.AreEqual(1, (int)j["MyProperty"]);
     }
 
-#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE)
+#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE || MONOTOUCH || MONODROID)
     [Test]
     public void PropertyItemTypeNameHandlingDynamic()
     {
@@ -1551,7 +1551,7 @@ namespace Newtonsoft.Json.Tests.Serialization
     public TypeNameHandlingTestObject Data { get; set; }
   }
 
-#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE)
+#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE || MONOTOUCH || MONODROID)
   public class PropertyItemTypeNameHandlingDynamic
   {
     [JsonProperty(ItemTypeNameHandling = TypeNameHandling.All)]

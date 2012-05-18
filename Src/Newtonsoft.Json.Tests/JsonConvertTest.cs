@@ -538,7 +538,7 @@ now brown cow?", '"', true);
       }
 #endif
 
-#if !NET20
+#if !(NET20 || MONOTOUCH || MONODROID)
       MemoryStream ms = new MemoryStream();
       DataContractSerializer s = new DataContractSerializer(typeof(T));
       s.WriteObject(ms, value);

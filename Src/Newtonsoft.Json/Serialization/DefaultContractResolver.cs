@@ -30,13 +30,13 @@ using System.Collections.Concurrent;
 #endif
 using System.Collections.Generic;
 using System.ComponentModel;
-#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE)
+#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE || MONOTOUCH || MONODROID)
 using System.Dynamic;
 #endif
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.Serialization;
-#if !(NETFX_CORE || PORTABLE)
+#if !(NETFX_CORE || PORTABLE || MONOTOUCH || MONODROID)
 using System.Security.Permissions;
 #endif
 using System.Xml.Serialization;
@@ -97,16 +97,16 @@ namespace Newtonsoft.Json.Serialization
     }
     private static readonly IList<JsonConverter> BuiltInConverters = new List<JsonConverter>
       {
-#if !(SILVERLIGHT || NET20 || NETFX_CORE || PORTABLE)
+#if !(SILVERLIGHT || NET20 || NETFX_CORE || PORTABLE || MONOTOUCH || MONODROID)
         new EntityKeyMemberConverter(),
 #endif
-#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE)
+#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE || MONOTOUCH || MONODROID)
         new ExpandoObjectConverter(),
 #endif
 #if (!(SILVERLIGHT || PORTABLE) || WINDOWS_PHONE)
         new XmlNodeConverter(),
 #endif
-#if !(SILVERLIGHT || NETFX_CORE || PORTABLE)
+#if !(SILVERLIGHT || NETFX_CORE || PORTABLE || MONOTOUCH || MONODROID)
         new BinaryConverter(),
         new DataSetConverter(),
         new DataTableConverter(),
@@ -756,7 +756,7 @@ namespace Newtonsoft.Json.Serialization
         return CreateISerializableContract(objectType);
 #endif
 
-#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE)
+#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE || MONOTOUCH || MONODROID)
       if (typeof(IDynamicMetaObjectProvider).IsAssignableFrom(t))
         return CreateDynamicContract(objectType);
 #endif
@@ -870,7 +870,7 @@ namespace Newtonsoft.Json.Serialization
       // warning - this method use to cause errors with Intellitrace. Retest in VS Ultimate after changes
       IValueProvider valueProvider;
 
-#if !(SILVERLIGHT || PORTABLE)
+#if !(SILVERLIGHT || PORTABLE || MONOTOUCH || MONODROID)
       if (DynamicCodeGeneration)
         valueProvider = new DynamicValueProvider(member);
       else

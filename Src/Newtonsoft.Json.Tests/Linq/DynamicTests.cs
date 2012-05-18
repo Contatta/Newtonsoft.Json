@@ -23,7 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-#if !(NET35 || NET20 || PORTABLE)
+#if !(NET35 || NET20 || PORTABLE || MONOTOUCH || MONODROID)
 using System;
 using System.Collections.Generic;
 using System.Dynamic;

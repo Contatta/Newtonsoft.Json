@@ -162,7 +162,12 @@ namespace Newtonsoft.Json
 
     private bool ParseDateIso(string text)
     {
+#if MONOTOUCH || MONODROID
+      // BUG: monotouch 5.2 does not parse fractional seconds correctly
+      const string isoDateFormat = "yyyy-MM-ddTHH:mm:ssK";
+#else
       const string isoDateFormat = "yyyy-MM-ddTHH:mm:ss.FFFFFFFK";
+#endif
 
 #if !NET20
       if (_readType == ReadType.ReadAsDateTimeOffset || (_readType == ReadType.Read && _dateParseHandling == DateParseHandling.DateTimeOffset))

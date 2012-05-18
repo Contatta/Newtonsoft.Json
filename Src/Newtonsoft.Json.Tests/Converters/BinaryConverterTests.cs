@@ -25,7 +25,7 @@
 
 using System;
 using System.Collections.Generic;
-#if !SILVERLIGHT && !PocketPC && !NET20 && !NETFX_CORE
+#if !SILVERLIGHT && !PocketPC && !NET20 && !NETFX_CORE && !MONOTOUCH && !MONODROID
 using System.Data.Linq;
 #endif
 #if !(SILVERLIGHT || NETFX_CORE)
@@ -54,7 +54,7 @@ namespace Newtonsoft.Json.Tests.Converters
       public byte[] NullByteArray { get; set; }
     }
 
-#if !(SILVERLIGHT || NET20 || NETFX_CORE || PORTABLE)
+#if !(SILVERLIGHT || NET20 || NETFX_CORE || PORTABLE || MONOTOUCH || MONODROID)
     [Test]
     public void DeserializeBinaryClass()
     {

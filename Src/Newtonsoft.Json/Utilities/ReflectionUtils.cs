@@ -168,7 +168,7 @@ namespace Newtonsoft.Json.Utilities
     public static string GetTypeName(Type t, FormatterAssemblyStyle assemblyFormat, SerializationBinder binder)
     {
       string fullyQualifiedTypeName;
-#if !(NET20 || NET35)
+#if !(NET20 || NET35 || MONOTOUCH || MONODROID)
       if (binder != null)
       {
         string assemblyName, typeName;

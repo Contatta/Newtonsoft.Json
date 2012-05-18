@@ -28,7 +28,7 @@ using System;
 using System.Collections.Concurrent;
 #endif
 using System.Collections.Generic;
-#if !SILVERLIGHT && !PocketPC && !NET20 && !NETFX_CORE
+#if !SILVERLIGHT && !PocketPC && !NET20 && !NETFX_CORE && !MONOTOUCH && !MONODROID
 using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 using System.Runtime.CompilerServices;
@@ -53,7 +53,7 @@ using System.Collections.ObjectModel;
 using Newtonsoft.Json.Bson;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Converters;
-#if !PocketPC && !NET20 && !WINDOWS_PHONE
+#if !PocketPC && !NET20 && !WINDOWS_PHONE && !MONOTOUCH && !MONODROID
 using System.Runtime.Serialization.Json;
 #endif
 using Newtonsoft.Json.Serialization;
@@ -68,7 +68,7 @@ using System.Text.RegularExpressions;
 using System.Collections.Specialized;
 using System.Linq.Expressions;
 #endif
-#if !(NET35 || NET20 || WINDOWS_PHONE)
+#if !(NET35 || NET20 || WINDOWS_PHONE || MONOTOUCH || MONODROID)
 using System.Dynamic;
 using System.ComponentModel;
 #endif
@@ -77,7 +77,7 @@ using Newtonsoft.Json.Utilities.LinqBridge;
 #else
 using System.Linq;
 #endif
-#if !(SILVERLIGHT || NETFX_CORE)
+#if !(SILVERLIGHT || NETFX_CORE || MONOTOUCH || MONODROID)
 using System.Drawing;
 #endif
 
@@ -172,7 +172,7 @@ namespace Newtonsoft.Json.Tests.Serialization
 
       string jsonText = JsonConvert.SerializeObject(testDictionary);
 
-#if !PocketPC && !NET20 && !WINDOWS_PHONE
+#if !PocketPC && !NET20 && !WINDOWS_PHONE && !MONOTOUCH && !MONODROID
       MemoryStream ms = new MemoryStream();
       DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Dictionary<string, object>));
       serializer.WriteObject(ms, testDictionary);
@@ -431,7 +431,7 @@ keyword such as type of business.""
       CollectionAssert.AreEqual(r1, r2);
     }
 
-#if !PocketPC && !NET20 && !WINDOWS_PHONE
+#if !PocketPC && !NET20 && !WINDOWS_PHONE && !MONOTOUCH && !MONODROID
     [Test]
     public void Unicode()
     {
@@ -1522,7 +1522,7 @@ keyword such as type of business.""
       Assert.AreEqual("titleId", n.FidOrder[n.FidOrder.Count - 1]);
     }
 
-#if !(SILVERLIGHT || NET20 || NETFX_CORE || PORTABLE)
+#if !(SILVERLIGHT || NET20 || NETFX_CORE || PORTABLE || MONOTOUCH || MONODROID)
     [MetadataType(typeof(OptInClassMetadata))]
     public class OptInClass
     {
@@ -1569,7 +1569,7 @@ keyword such as type of business.""
     }
 #endif
 
-#if !PocketPC && !NET20
+#if !PocketPC && !(NET20 || MONOTOUCH || MONODROID)
     [DataContract]
     public class DataContractPrivateMembers
     {
@@ -2630,7 +2630,7 @@ To force JSON objects to deserialize add the JsonObjectAttribute to the type. Pa
       public string Ethnicity { get; set; }
     }
 
-#if !NET20 && !PocketPC && !WINDOWS_PHONE
+#if !NET20 && !PocketPC && !WINDOWS_PHONE && !MONOTOUCH && !MONODROID
     public class DataContractJsonSerializerTestClass
     {
       public TimeSpan TimeSpanProperty { get; set; }
@@ -4219,7 +4219,7 @@ To fix this error either change the environment to be fully trusted, change the 
 }", json);
     }
 
-#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE)
+#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE || MONOTOUCH || MONODROID)
     [Test]
     public void SerializeExpandoObject()
     {
@@ -4381,7 +4381,7 @@ To fix this error either change the environment to be fully trusted, change the 
       Assert.AreEqual(meh.IDontWork, "meh");
     }
 
-#if !(SILVERLIGHT || PocketPC || NET20 || NETFX_CORE)
+#if !(SILVERLIGHT || PocketPC || NET20 || NETFX_CORE || MONOTOUCH || MONODROID)
     [DataContract]
     public struct StructISerializable : ISerializable
     {
@@ -4805,7 +4805,7 @@ To fix this error either change the environment to be fully trusted, change the 
       JsonConvert.DeserializeObject<EnumerableArrayPropertyClass>(json);
     }
 
-#if !NET20
+#if !NET20 && !MONOTOUCH && !MONODROID
     [DataContract]
     public class BaseDataContract
     {
@@ -5141,7 +5141,7 @@ To fix this error either change the environment to be fully trusted, change the 
       Assert.IsNull(r.Departures.ElementAt(2));
     }
 
-#if !(NET20)
+#if !(NET20 || MONOTOUCH || MONODROID)
     [DataContract]
     public class BaseType
     {
@@ -5462,7 +5462,7 @@ To fix this error either change the environment to be fully trusted, change the 
       }
     }
 
-#if !(SILVERLIGHT || WINDOWS_PHONE || NET20 || NETFX_CORE)
+#if !(SILVERLIGHT || WINDOWS_PHONE || NET20 || NETFX_CORE || MONOTOUCH || MONODROID)
     [Test]
     public void DeserializeDecimalsWithCulture()
     {
@@ -5903,7 +5903,7 @@ Parameter name: value",
     }
 #endif
 
-#if !(SILVERLIGHT || NETFX_CORE)
+#if !(SILVERLIGHT || NETFX_CORE || MONOTOUCH || MONODROID)
     [Test]
     public void MetroBlogPost()
     {
@@ -6223,7 +6223,7 @@ Parameter name: value",
 }", json);
     }
 
-#if !(NET20 || NET35)
+#if !(NET20 || NET35 || MONOTOUCH || MONODROID)
     [Test]
     public void SerializeDataContractSerializationAttributes()
     {
@@ -6552,7 +6552,7 @@ Parameter name: value",
 
   public class MetroPropertyNameResolver : DefaultContractResolver
   {
-    protected internal override string ResolvePropertyName(string propertyName)
+	protected internal override string ResolvePropertyName(string propertyName)
     {
 #if !(SILVERLIGHT || NETFX_CORE)
       return ":::" + propertyName.ToUpper(CultureInfo.InvariantCulture) + ":::";
@@ -6562,7 +6562,7 @@ Parameter name: value",
     }
   }
 
-#if !(NET20 || NET35)
+#if !(NET20 || NET35 || MONOTOUCH || MONODROID)
   [DataContract]
   public class DataContractSerializationAttributesClass
   {

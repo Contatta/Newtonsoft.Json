@@ -27,7 +27,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE)
+#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE || MONOTOUCH || MONODROID)
 using System.Dynamic;
 #endif
 using System.Globalization;
@@ -349,12 +349,12 @@ namespace Newtonsoft.Json.Serialization
             targetDictionary = CreateNewDictionary(reader, dictionaryContract);
 
           return PopulateDictionary(dictionaryContract.CreateWrapper(targetDictionary), reader, dictionaryContract, member, containerMember, id);
-#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE)
+#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE || MONOTOUCH || MONODROID)
         case JsonContractType.Dynamic:
           JsonDynamicContract dynamicContract = (JsonDynamicContract) contract;
           return CreateDynamic(reader, dynamicContract, member, id);
 #endif
-#if !(SILVERLIGHT || NETFX_CORE || PORTABLE)
+#if !(SILVERLIGHT || NETFX_CORE || PORTABLE || MONOTOUCH || MONODROID)
         case JsonContractType.Serializable:
           JsonISerializableContract serializableContract = (JsonISerializableContract) contract;
           return CreateISerializable(reader, serializableContract, id);
@@ -441,7 +441,7 @@ To force JSON objects to deserialize add the JsonObjectAttribute to the type.".F
                   throw JsonSerializationException.Create(reader, "Type specified in JSON '{0}' was not resolved.".FormatWith(CultureInfo.InvariantCulture, qualifiedTypeName));
 
                 if (objectType != null
-#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE)
+#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE || MONOTOUCH || MONODROID)
                     && objectType != typeof (IDynamicMetaObjectProvider)
 #endif
                     && !objectType.IsAssignableFrom(specifiedType))
@@ -559,7 +559,7 @@ To force JSON arrays to deserialize add the JsonArrayAttribute to the type.".For
     private bool HasDefinedType(Type type)
     {
       return (type != null && type != typeof (object) && !typeof (JToken).IsSubclassOf(type)
-#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE)
+#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE || MONOTOUCH || MONODROID)
         && type != typeof (IDynamicMetaObjectProvider)
 #endif
         );
@@ -956,7 +956,7 @@ To fix this error either change the environment to be fully trusted, change the 
     }
 #endif
 
-#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE)
+#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE || MONOTOUCH || MONODROID)
     private object CreateDynamic(JsonReader reader, JsonDynamicContract contract, JsonProperty member, string id)
     {
       IDynamicMetaObjectProvider newObject = null;

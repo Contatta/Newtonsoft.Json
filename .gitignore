@@ -5,3 +5,5 @@ TestResults/
 AppPackages/
 *.suo
 *.user
+.DS_Store
+*.userprefs

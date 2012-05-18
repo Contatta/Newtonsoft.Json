@@ -37,7 +37,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestFixture = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
 #endif
-#if !(SILVERLIGHT || NETFX_CORE || NET20)
+#if !(SILVERLIGHT || NETFX_CORE || NET20 || MONOTOUCH || MONODROID)
 using System.Runtime.Serialization.Json;
 #endif
 using Newtonsoft.Json.Serialization;
@@ -59,7 +59,7 @@ namespace Newtonsoft.Json.Tests.Serialization
           nonSerializedField = "Error"
         };
 
-#if !(SILVERLIGHT || NETFX_CORE || NET20 || PORTABLE)
+#if !(SILVERLIGHT || NETFX_CORE || NET20 || PORTABLE || MONOTOUCH || MONODROID)
       MemoryStream ms = new MemoryStream();
       DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(typeof(SerializableType));
       dataContractJsonSerializer.WriteObject(ms, serializableType);
