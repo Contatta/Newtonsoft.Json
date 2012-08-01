@@ -23,7 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-#if !(SILVERLIGHT || PORTABLE || MONOTOUCH || MONODROID)
+#if !(SILVERLIGHT || PORTABLE || NETFX_CORE || MONOTOUCH || MONODROID)
 using System;
 using System.Collections.Generic;
 #if NET20

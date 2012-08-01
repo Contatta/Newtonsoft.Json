@@ -30,9 +30,9 @@ using System.Globalization;
 using System.IO;
 using NUnit.Framework;
 #else
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestFixture = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
-using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixture = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using Test = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
 #endif
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
@@ -803,6 +803,7 @@ keyword such as type of business.""
         o.Children()["item"].Children()["title"].Values<string>().ToArray());
     }
 
+    [Test]
     public void UriGuidTimeSpanTestClassEmptyTest()
     {
       UriGuidTimeSpanTestClass c1 = new UriGuidTimeSpanTestClass();
@@ -824,6 +825,7 @@ keyword such as type of business.""
       Assert.AreEqual(c1.Uri, c2.Uri);
     }
 
+    [Test]
     public void UriGuidTimeSpanTestClassValuesTest()
     {
       UriGuidTimeSpanTestClass c1 = new UriGuidTimeSpanTestClass
@@ -850,6 +852,18 @@ keyword such as type of business.""
       Assert.AreEqual(c1.TimeSpan, c2.TimeSpan);
       Assert.AreEqual(c1.NullableTimeSpan, c2.NullableTimeSpan);
       Assert.AreEqual(c1.Uri, c2.Uri);
+    }
+
+    [Test]
+    public void ParseWithPrecendingComments()
+    {
+      string json = @"/* blah */ {'hi':'hi!'}";
+      JObject o = JObject.Parse(json);
+      Assert.AreEqual("hi!", (string)o["hi"]);
+
+      json = @"/* blah */ ['hi!']";
+      JArray a = JArray.Parse(json);
+      Assert.AreEqual("hi!", (string)a[0]);
     }
   }
 }

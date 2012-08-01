@@ -372,6 +372,15 @@ namespace Newtonsoft.Json.Serialization
           contract.ConstructorParameters.AddRange(CreateConstructorParameters(constructor, contract.Properties));
         }
       }
+      else if (contract.MemberSerialization == MemberSerialization.Fields)
+      {
+#if !(SILVERLIGHT || NETFX_CORE || PORTABLE)
+        // mimic DataContractSerializer behaviour when populating fields by overriding default creator to create an uninitialized object
+        // note that this is only possible when the application is fully trusted so fall back to using the default constructor (if available) in partial trust
+        if (JsonTypeReflector.FullyTrusted)
+          contract.DefaultCreator = contract.GetUninitializedObject;
+#endif
+      }
       else if (contract.DefaultCreator == null || contract.DefaultCreatorNonPublic)
       {
         ConstructorInfo constructor = GetParametrizedConstructor(contract.NonNullableUnderlyingType);
@@ -448,8 +457,7 @@ namespace Newtonsoft.Json.Serialization
       property.PropertyType = parameterInfo.ParameterType;
 
       bool allowNonPublicAccess;
-      bool hasExplicitAttribute;
-      SetPropertySettingsFromAttributes(property, parameterInfo.GetCustomAttributeProvider(), parameterInfo.Name, parameterInfo.Member.DeclaringType, MemberSerialization.OptOut, out allowNonPublicAccess, out hasExplicitAttribute);
+      SetPropertySettingsFromAttributes(property, parameterInfo.GetCustomAttributeProvider(), parameterInfo.Name, parameterInfo.Member.DeclaringType, MemberSerialization.OptOut, out allowNonPublicAccess);
 
       property.Readable = false;
       property.Writable = true;
@@ -477,7 +485,7 @@ namespace Newtonsoft.Json.Serialization
     /// Resolves the default <see cref="JsonConverter" /> for the contract.
     /// </summary>
     /// <param name="objectType">Type of the object.</param>
-    /// <returns></returns>
+    /// <returns>The contract's default <see cref="JsonConverter" />.</returns>
     protected virtual JsonConverter ResolveContractConverter(Type objectType)
     {
       return JsonTypeReflector.GetJsonConverter(objectType.GetCustomAttributeProvider(), objectType);
@@ -870,7 +878,7 @@ namespace Newtonsoft.Json.Serialization
       // warning - this method use to cause errors with Intellitrace. Retest in VS Ultimate after changes
       IValueProvider valueProvider;
 
-#if !(SILVERLIGHT || PORTABLE || MONOTOUCH || MONODROID)
+#if !(SILVERLIGHT || PORTABLE || NETFX_CORE || MONOTOUCH || MONODROID)
       if (DynamicCodeGeneration)
         valueProvider = new DynamicValueProvider(member);
       else
@@ -896,11 +904,19 @@ namespace Newtonsoft.Json.Serialization
       property.ValueProvider = CreateMemberValueProvider(member);
 
       bool allowNonPublicAccess;
-      bool hasExplicitAttribute;
-      SetPropertySettingsFromAttributes(property, member.GetCustomAttributeProvider(), member.Name, member.DeclaringType, memberSerialization, out allowNonPublicAccess, out hasExplicitAttribute);
+      SetPropertySettingsFromAttributes(property, member.GetCustomAttributeProvider(), member.Name, member.DeclaringType, memberSerialization, out allowNonPublicAccess);
 
+      if (memberSerialization != MemberSerialization.Fields)
+      {
       property.Readable = ReflectionUtils.CanReadMemberValue(member, allowNonPublicAccess);
-      property.Writable = ReflectionUtils.CanSetMemberValue(member, allowNonPublicAccess, hasExplicitAttribute);
+        property.Writable = ReflectionUtils.CanSetMemberValue(member, allowNonPublicAccess, property.HasMemberAttribute);
+      }
+      else
+      {
+        // write to readonly fields
+        property.Readable = true;
+        property.Writable = true;
+      }
       property.ShouldSerialize = CreateShouldSerializeTest(member);
 
       SetIsSpecifiedActions(property, member, allowNonPublicAccess);
@@ -908,10 +924,8 @@ namespace Newtonsoft.Json.Serialization
       return property;
     }
 
-    private void SetPropertySettingsFromAttributes(JsonProperty property, ICustomAttributeProvider attributeProvider, string name, Type declaringType, MemberSerialization memberSerialization, out bool allowNonPublicAccess, out bool hasExplicitAttribute)
+    private void SetPropertySettingsFromAttributes(JsonProperty property, ICustomAttributeProvider attributeProvider, string name, Type declaringType, MemberSerialization memberSerialization, out bool allowNonPublicAccess)
     {
-      hasExplicitAttribute = false;
-
 #if !PocketPC && !NET20
       DataContractAttribute dataContractAttribute = JsonTypeReflector.GetDataContractAttribute(declaringType);
 
@@ -931,7 +945,7 @@ namespace Newtonsoft.Json.Serialization
 
       JsonPropertyAttribute propertyAttribute = JsonTypeReflector.GetAttribute<JsonPropertyAttribute>(attributeProvider);
       if (propertyAttribute != null)
-        hasExplicitAttribute = true;
+        property.HasMemberAttribute = true;
 
       string mappedName;
       if (propertyAttribute != null && propertyAttribute.PropertyName != null)
@@ -1021,7 +1035,7 @@ namespace Newtonsoft.Json.Serialization
       if (dataMemberAttribute != null)
       {
         allowNonPublicAccess = true;
-        hasExplicitAttribute = true;
+        property.HasMemberAttribute = true;
       }
 #endif
     }
@@ -1066,6 +1080,18 @@ namespace Newtonsoft.Json.Serialization
     protected internal virtual string ResolvePropertyName(string propertyName)
     {
       return propertyName;
+    }
+
+    /// <summary>
+    /// Gets the resolved name of the property.
+    /// </summary>
+    /// <param name="propertyName">Name of the property.</param>
+    /// <returns>Name of the property.</returns>
+    public string GetResolvedPropertyName(string propertyName)
+    {
+      // this is a new method rather than changing the visibility of ResolvePropertyName to avoid
+      // a breaking change for anyone who has overidden the method
+      return ResolvePropertyName(propertyName);
     }
   }
 }

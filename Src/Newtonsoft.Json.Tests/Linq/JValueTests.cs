@@ -29,9 +29,9 @@ using System.Text;
 #if !NETFX_CORE
 using NUnit.Framework;
 #else
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestFixture = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
-using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixture = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using Test = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
 #endif
 using Newtonsoft.Json.Linq;
 using System.Globalization;
@@ -302,6 +302,17 @@ namespace Newtonsoft.Json.Tests.Linq
       Assert.AreEqual(1L, orderedValues[0]);
       Assert.AreEqual(1.1m, orderedValues[1]);
       Assert.AreEqual(1.2d, orderedValues[2]);
+    }
+
+    [Test]
+    public void WriteSingle()
+    {
+      float f = 5.2f;
+      JValue value = new JValue(f);
+
+      string json = value.ToString(Formatting.None);
+
+      Assert.AreEqual("5.2", json);
     }
   }
 }

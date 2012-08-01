@@ -448,7 +448,7 @@ namespace Newtonsoft.Json.Serialization
     {
       get
       {
-#if !(SILVERLIGHT || PORTABLE || MONOTOUCH || MONODROID)
+#if !(SILVERLIGHT || PORTABLE || NETFX_CORE || MONOTOUCH || MONODROID)
         if (DynamicCodeGeneration)
           return DynamicReflectionDelegateFactory.Instance;
 #endif

@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters;
 using System.Text;
@@ -39,9 +40,9 @@ using Newtonsoft.Json.Utilities;
 #if !NETFX_CORE
 using NUnit.Framework;
 #else
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestFixture = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
-using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixture = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using Test = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
 #endif
 
 namespace Newtonsoft.Json.Tests.Serialization
@@ -60,6 +61,8 @@ namespace Newtonsoft.Json.Tests.Serialization
       private readonly Dictionary<string, object> _members;
 
       public int Int;
+      [JsonProperty]
+      public bool Explicit;
       public DynamicChildObject ChildObject { get; set; }
 
       internal Dictionary<string, object> Members
@@ -122,6 +125,7 @@ namespace Newtonsoft.Json.Tests.Serialization
     public void SerializeDynamicObject()
     {
       TestDynamicObject dynamicObject = new TestDynamicObject();
+      dynamicObject.Explicit = true;
 
       dynamic d = dynamicObject;
       d.Int = 1;
@@ -144,6 +148,7 @@ namespace Newtonsoft.Json.Tests.Serialization
 
       string json = JsonConvert.SerializeObject(dynamicObject, Formatting.Indented);
       Assert.AreEqual(@"{
+  ""Explicit"": true,
   ""Decimal"": 99.9,
   ""Int"": 1,
   ""ChildObject"": {
@@ -153,6 +158,8 @@ namespace Newtonsoft.Json.Tests.Serialization
 }", json);
 
       TestDynamicObject newDynamicObject = JsonConvert.DeserializeObject<TestDynamicObject>(json);
+      Assert.AreEqual(true, newDynamicObject.Explicit);
+
       d = newDynamicObject;
 
       Assert.AreEqual(99.9, d.Decimal);
